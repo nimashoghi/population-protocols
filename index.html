@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+        />
+
+        <title>Population Protocols</title>
+
+        <link rel="stylesheet" href="css/reset.css" />
+        <link rel="stylesheet" href="css/reveal.css" />
+        <link rel="stylesheet" href="css/theme/black.css" />
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/monokai.css" />
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement("link");
+            link.rel = "stylesheet";
+            link.type = "text/css";
+            link.href = window.location.search.match(/print-pdf/gi)
+                ? "css/print/pdf.css"
+                : "css/print/paper.css";
+            document.getElementsByTagName("head")[0].appendChild(link);
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section data-markdown>
+                    <textarea data-template>
+                        # Population Protocols
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        Population protocols provide a basic model that allows us to perform arbitrary computation through asymmetric **interactions** of finite-state **agents** organized in an **interaction graph**.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Population Protocols
+                        - The interaction graph's nodes are the agents in our system. An edge in this graph indicates that two nodes can interact with each other.
+                        - When two nodes interact, their states are updated by looking up their previous states in the transition table and setting their states to this value.
+                        - Interactions are asymmetric, i.e., one agent is the initiator and the other is the responder.
+                        - One interaction occurs at every iteration of the protocol. The scheduler picks what agents perform this interaction.
+                        - Agents have O(1) state, but this requirement has been relaxed in some extensions of the model.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Population Protocols
+                        - Scheduler: The scheduler decides which two pairs of agents should interact at every iteration of the protocol.
+                            - The scheduler is an adversary in the original model, but some modifications of the model enforce a random scheduler.
+                        - Fairness Condition: We do not allow the scheduler to avoid a possible step forever.
+                            - This is quite important if the scheduler is an adversary.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Population Protocols
+
+                        - When we start the system, the input is distributed to the agents using the input function.
+                        - At the end of every interaction, the state of the entire interaction graph can be converted to our output alphabet using the output function.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Basic Demo (Leader Election)
+
+                        - The graph starts with all nodes being red.
+                        - Red nodes are leaders and blue nodes are followers.
+                        - Goal: Single leader remaining
+
+                        ![Transition Table](https://i.imgur.com/BRU63Pt.png)
+                    </textarea>
+                </section>
+                <section>
+                    <h2>Demo</h2>
+                    <video
+                        data-autoplay
+                        class="stretch"
+                        src="./demo.mp4"
+                    ></video>
+                </section>
+
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Properties
+                        - Anonymous: No agent can identify other agents. Some variants of the model relax this requirement.
+                        - Stable: Population protocols generally cannot detect when they have finished; instead, the agents' outputs are required to converge after some finite time to a common, correct value.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Properties
+                        - Uniform: The protocol's specification has no dependence on the number of agents in the system.
+                        - Unpredictable (but fair) Interactions: Because interactions can be selected in an adversarial manner, the interaction patterns are unpredictable.
+                            - To ensure that progress is made, the adversary must be fair.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Some Other Terminology
+                        - Configuration: A list of all of the agents' states at a specific point in time.
+                        - Execution: A sequence of computations `$C_0, C_1, ...$` where `$C_0$` is the initial configuration and `$\forall i \ge 0, C_i \longrightarrow C_{i+1}$`.
+                        - Time: The total number of steps for the system to converge.
+                        - Parallel Time: The average number of steps initiated by any agent (i.e., total time divided by the number of agents).
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Formal specification
+                        - `$Q$`, the possible states for an agent,
+                        - `$\Sigma$`, the input alphabet,
+                        - `$Y$`, the output alphabet,
+                        - `$\iota$`, a mapping from `$\Sigma$` to `$Q$` which maps the input to input states for the agents within our interaction graph,
+                        - `$\omega$`, a mapping from `$Q$` to `$Y$` which maps the state of agent to an output within our system,
+                        - `$\delta \subseteq Q^4$`, a transition function which describes how agents interact with each other.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## What can population protocols compute?
+
+                        Theorem: A predicate is computable in the basic population
+                        protocol model if and only if it is semilinear.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Definitions
+
+                        - Semilinear Sets: A semilinear set is a subset of $\mathbb{N}^d$ that is a finite union of linear sets of the form {$b$ + $k_1 a_1$ + ··· + $k_m a_m$}, where $b$ is a $d$-dimensional base vector, $a_1$ through $a_m$ are basis vectors, and $k_1$ through $k_m$ are non-negative coefficients.
+                        - Presburger Arithmetic: Arithmetic on the natural numbers with addition but not multiplication. Presburget Arithmetic allows for quantifier elimination, allowing us to eliminate universal and existential quantifiers.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Definitions
+
+                        - Semilinear Predicate: Predicates that are true precisely on semilinear sets.
+                            - Semilinear predicates can be described by first-order logical formulas in Presburger Arithmetic.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Proof Intuition
+
+                        - A predicate is computable in the basic population protocol model if it is semilinear:
+                            - To prove this, we need to prove that population protocols can compute the following operations:
+                                - Addition (`$+$`)
+                                - Mod-k congruence for each constant `$k$` (`$\equiv_{k}$`)
+                                - Logical AND, OR, and NEGATE operators (`$\land \lor \neg$`)
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Proof Intuition
+
+                        - A predicate is semilinear if it is computable in the basic population protocol model:
+                            - Population protocols can be "pumped" by adding extra input tokens that turn out not to affect the final output. Using this, we can show that the positive inputs to a population protocol (considered as sets of vectors) can be separated into a collection of cones over some finite set of minimal positive inputs, and that each of these cones can be further expressed using only a finite set of basis vectors.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Proof Intuition
+
+                        - A predicate is semilinear if it is computable in the basic population protocol model:
+                            - D. Angluin, J. Aspnes, and D. Eisenstat. Stably computable predicates are semilinear. In Proc. 25th Annual ACM Symposium on Principles of Distributed Computing, pages 292–299, 2006.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Computation by Epidemics
+
+                        - An epidemic starting from one infected agent spreads to all agents in $\Theta(\log{N})$ time with high probability
+                        - 1 leader agent sends instruction opcodes to worker agents (using epidemic).
+                        - Leader collects response (if necessary) from counter-epidemic, updates its state, and starts a new cycle.
+                        - Leader moves to the next instruction using a phase clock.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Other Similar Models
+                        - Cellular Automata
+                            - Agents organized in a very symmetric and regular graph (e.g., grid).
+                            - Agents can sense their entire neighborhood.
+                            - All agents run synchronously.
+                        - Asynchronous Cellular Automata:
+                            - Assumes that an agent can learn the states of all its neighbors simultaneously, in contrast to the pairwise interactions that form the basis of population protocols.
+                    </textarea>
+                </section>
+                <section data-markdown>
+                    <textarea data-template>
+                        ## Other Similar Models
+                        - Markov Chains:
+                            - If our random scheduler uses some sort of underlying probability distribution, then we can create a Markov chain:
+                                - At each configuration, we have a probability distribution on the set of possible successor configuration.
+                    </textarea>
+                </section>
+            </div>
+        </div>
+
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info about config & dependencies:
+            // - https://github.com/hakimel/reveal.js#configuration
+            // - https://github.com/hakimel/reveal.js#dependencies
+            Reveal.initialize({
+                math: {
+                    mathjax:
+                        "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js",
+                    config: "TeX-AMS_HTML-full", // See http://docs.mathjax.org/en/latest/config-files.html
+                    // pass other options into `MathJax.Hub.Config()`
+                    TeX: { Macros: { RR: "{\\bf R}" } },
+                },
+                hash: true,
+                dependencies: [
+                    { src: "plugin/markdown/marked.js" },
+                    { src: "plugin/markdown/markdown.js" },
+                    { src: "plugin/highlight/highlight.js" },
+                    { src: "plugin/notes/notes.js", async: true },
+                    { src: "plugin/math/math.js", async: true },
+                ],
+            });
+        </script>
+    </body>
+</html>
